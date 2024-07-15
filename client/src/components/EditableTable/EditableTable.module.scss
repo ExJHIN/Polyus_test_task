@@ -1,0 +1,17 @@
+.tableContainer {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.editableTable {
+  width: 100%;
+  max-width: 1980px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+}

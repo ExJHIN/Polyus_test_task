@@ -1,0 +1,44 @@
+@charset "UTF-8";
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  font-family: Roboto, Manrope, sans-serif;
+  font-size: 24px;
+  line-height: 32px;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Главный контейнер скроллбара */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+/* Вертикальный бегунок */
+::-webkit-scrollbar-thumb {
+  background: #FFB267;
+  border-radius: 6px;
+}
+
+/* Горизонтальный бегунок */
+::-webkit-scrollbar-thumb:horizontal {
+  background: #FFB267;
+  border-radius: 6px;
+}
+
+/* Место стыка скролла */
+::-webkit-scrollbar-corner {
+  background-color: #FFB267;
+}
+
