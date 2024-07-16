@@ -1,17 +1,26 @@
 import { useState, useEffect, useCallback } from 'react';
 import {TableData} from "./types.ts";
 import {initialTableData} from "./constants.ts";
+import { isDeepEqual } from '../../utils/isDeepEqual';
 
+/**
+ * Хук для управления состоянием таблицы, редактирования ячеек и отслеживания изменений.
+ *
+ * @returns {Object} Возвращает текущее состояние таблицы, функцию для редактирования ячеек и состояние обратного отсчета.
+ */
 export const useTable = () => {
   const [dataTable, setTableData] = useState<TableData>(initialTableData);
   const [editTimeout, setEditTimeout] = useState<NodeJS.Timeout | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [editedCells, setEditedCells] = useState<{ [key: number]: string }>({});
 
-  const isTableDataChanged = (newData: TableData) => {
-    return JSON.stringify(newData) !== JSON.stringify(initialTableData);
-  };
-
+  /**
+   * Обработчик редактирования ячеек таблицы.
+   *
+   * @param {number} id - Идентификатор редактируемой ячейки.
+   * @param {string} value - Новое значение ячейки.
+   * @param {boolean} [isHeader=false] - Флаг, указывающий на то, является ли редактируемая ячейка заголовком.
+   */
   const handleEdit = useCallback((id: number, value: string, isHeader: boolean = false) => {
     let newDataTable: TableData;
 
@@ -34,7 +43,7 @@ export const useTable = () => {
       clearTimeout(editTimeout);
     }
 
-    if (isTableDataChanged(newDataTable)) {
+    if (!isDeepEqual(newDataTable, initialTableData)) {
       setCountdown(null);
       setEditTimeout(setTimeout(() => setCountdown(10), 5000));
     } else {

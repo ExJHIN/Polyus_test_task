@@ -1,45 +1,52 @@
 import styles from './TableBody.module.scss';
 import { TableBodyProps } from './types.ts';
-import React, { useCallback } from 'react';
-import { useValidateTableBody } from '../../../../hooks/useValidateTableBody';
+import { ChangeEvent, useCallback } from 'react';
+import { getValidateTableValue } from '../../../../utils/getValidateTableValue';
 
 export function TableBody({ rows, handleEdit }: TableBodyProps) {
-  const { validateInput } = useValidateTableBody();
+  /**
+   * Обработчик изменения значений в ячейках таблицы.
+   *
+   * @param {number} id - Идентификатор редактируемой ячейки.
+   * @param {'text' | 'number' | 'percent'} type - Тип данных в ячейке.
+   * @returns {(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void} Функция-обработчик событий.
+   */
+  const handleInputChange = useCallback((id: number, type: 'text' | 'number' | 'percent') => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const nullableValue = getValidateTableValue(e.target.value, type);
 
-  const handleInputChange = useCallback((id: number, type: 'text' | 'number' | 'percent') => (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
-    const validValue = validateInput(e.target.value, type);
-    handleEdit(id, validValue);
-  }, [validateInput, handleEdit]);
+    if (nullableValue !== null) {
+      handleEdit(id, nullableValue);
+    }
+  }, [handleEdit]);
 
   return (
     <tbody>
-      {rows.map((row, rowIndex) => (
-        <tr key={rowIndex}>
-          {row.cells.map((cell) => (
-            <td
-              key={cell.id}
-              className={`${styles.bodyCell} ${cell.id === 8 ? styles.statusText : ''}`}
-              colSpan={cell.colspan || 1}
-              rowSpan={cell.rowspan || 1}
-            >
-              {cell.id === 7 ? (
-                <textarea
-                  className={styles.bodyTextarea}
-                  value={cell.value}
-                  onChange={handleInputChange(cell.id, 'text')}
-                />
-              ) : (
-                <input
-                  type={cell.type === 'number' ? 'number' : 'text'}
-                  className={styles.bodyInput}
-                  value={cell.type === 'percent' ? `${cell.value}%` : cell.value}
-                  onChange={handleInputChange(cell.id, cell.type)}
-                />
-              )}
-            </td>
-          ))}
-        </tr>
-      ))}
+    {rows.map((row, rowIndex) => (
+      <tr key={rowIndex}>
+        {row.cells.map(({ id, value, rowspan, colspan, type }) => (
+          <td
+            key={id}
+            className={`${styles.bodyCell} ${id === 8 ? styles.statusText : ''}`}
+            colSpan={colspan || 1}
+            rowSpan={rowspan || 1}
+          >
+            {id === 7 ? (
+              <textarea
+                className={styles.bodyTextarea}
+                value={value}
+                onChange={handleInputChange(id, 'text')}
+              />
+            ) : (
+              <input
+                className={styles.bodyInput}
+                value={type === 'percent' ? `${value}%` : value}
+                onChange={handleInputChange(id, type)}
+              />
+            )}
+          </td>
+        ))}
+      </tr>
+    ))}
     </tbody>
   );
 }
